@@ -3,9 +3,9 @@
 using namespace std;
 const int fieldSize=7;
 int num[fieldSize][fieldSize],numcl[fieldSize][fieldSize];
-
+//pos1-строка, pos2-стобец
 bool chekPos(int pos1, int pos2){
-    if(pos1<0 || pos1> fieldSize || pos2<0 || pos2> fieldSize) return true ;
+    if(pos1<0 || pos1> fieldSize-1 || pos2<0 || pos2> fieldSize-1) return true ;
     return num[pos1][pos2]==0 ;
    
 }
@@ -68,6 +68,8 @@ void showFieldcl()
                 cout<<"m  ";
             else if(numcl[i][z]==2)
                 cout<<"h  ";
+            else if(numcl[i][z]==3)
+                cout<<"#  ";    
             else
                 cout<<"0  ";
         cout<<endl;
@@ -205,9 +207,28 @@ void smallShip(){
             }
         }
 }
+
+void fillNbrs(int pos1, int pos2){
+    if(pos1-1>=0 && pos1-1<=fieldSize-1 && pos2-1>=0 && pos2-1<=fieldSize-1)
+    numcl[pos1-1][pos2-1]=3; 
+    if(pos1-1>=0 && pos1-1<=fieldSize-1 && pos2>=0 && pos2<=fieldSize-1)
+    numcl[pos1-1][pos2]=3;
+    if(pos1>=0 && pos1<=fieldSize-1 && pos2-1>=0 && pos2-1<=fieldSize-1)
+    numcl[pos1][pos2-1]=3;
+    if(pos1-1>=0 && pos1-1<=fieldSize-1 && pos2+1>=0 && pos2+1<=fieldSize-1)
+    numcl[pos1-1][pos2+1]=3; 
+    if(pos1>=0 && pos1<=fieldSize-1 && pos2+1>=0 && pos2+1<=fieldSize-1)
+    numcl[pos1][pos2+1]=3; 
+    if(pos1+1>=0 && pos1+1<=fieldSize-1 && pos2-1>=0 && pos2-1<=fieldSize-1)
+    numcl[pos1+1][pos2-1]=3; 
+    if(pos1+1>=0 && pos1+1<=fieldSize-1 && pos2>=0 && pos2<=fieldSize-1)
+    numcl[pos1+1][pos2]=3; 
+    if(pos1+1>=0 && pos1+1<=fieldSize-1 && pos2+1>=0 && pos2+1<=fieldSize-1)
+    numcl[pos1+1][pos2+1]=3;    
+}
 void makeGuess(){
     int pos1,pos2;
-    cin>>pos2>>pos1;
+    cin>>pos1>>pos2;
     pos1-=1;
     pos2-=1;
     if(0<=pos1 && pos1<=6 && 0<=pos2 && pos2<=6){
@@ -215,8 +236,10 @@ void makeGuess(){
         {
             if(num[pos1][pos2]==1)
             {
-                if(noNrs(pos1,pos2))
+                if(noNrs(pos1,pos2)){
                 cout<<"Sunk!!!";
+                fillNbrs(pos1,pos2);
+                }
                 else
                 cout<<"Hit!!!";
                 num[pos1][pos2]=0;
@@ -235,12 +258,11 @@ void makeGuess(){
 }
 
 int main()
-{
-    int n=fieldSize,k=0,val=0,g=1,h, saba, pos1, pos2;
-    string name;
-    srand((unsigned) time(NULL));
-    while(true){
+{   
     cout<<"Welcome to the Battleship game!!!"<<endl<< "h-hit, m-miss, 0- you didnt shoot there yet"<<endl<<endl<<"Type your name:";
+    srand((unsigned) time(NULL));
+    int n=fieldSize,k=0,val=0,g,h, saba, pos1, pos2;
+    string name;
     cin>>name;
      for(int i=0; i<n; i++)
     {
@@ -259,6 +281,7 @@ int main()
     smallShip();
     smallShip();
     //spawn is done with ships
+    showField();
     while(true){
     cout<<endl<<"Now guess where is the ship!!!"<<endl;
     makeGuess();
@@ -267,16 +290,7 @@ int main()
         break;
     cout<<endl;
     showFieldcl();
-    cout<<"Press any button to continue...";
-    getchar();
-    getchar();
-    system("clear");
     }
-    cout<<"Congratulations You sunk all ships, your shot count is:"<<val<<endl<<"Do you want to continue?"<<endl<<"Type 1 to contionue, Type 0 to stop";
-    cin>>saba;
-    if(saba==0)
-    break;
-    }
-    cout<<g<<" "<<name<<" "<<val;
+    cout<<"Congratulations You sunk all ships, your shot count is:"<<val;
     return 0;
-}
+} 
